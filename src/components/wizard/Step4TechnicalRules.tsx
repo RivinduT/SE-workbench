@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -15,6 +16,8 @@ export interface TechnicalRules {
   mandatoryTech: string[];
   teamSkills: string;
   integrations: string;
+  regulations: string;
+  dataResidency: "none" | "required";
 }
 
 interface Step4TechnicalRulesProps {
@@ -65,19 +68,21 @@ const Step4TechnicalRules = ({ values, onChange }: Step4TechnicalRulesProps) => 
           <Settings className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-foreground">What are the rules of the road? ⚙️</h2>
-          <p className="text-muted-foreground mt-1">Technical constraints and requirements</p>
+          <h2 className="text-3xl font-bold text-foreground">What tools and crew do we have to build this? 🧑‍🚀</h2>
+          <p className="text-muted-foreground mt-1">These are the real-world constraints we must work within.</p>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Left Column - Constraints */}
+        {/* Left Column - The Tech */}
         <div className="space-y-6">
-          <div className="p-6 rounded-xl border bg-card">
+          <h3 className="text-lg font-semibold">The Tech</h3>
+          
+          <div className="p-6 rounded-xl border bg-card/50 backdrop-blur border-primary/20">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Label htmlFor="mandatory-tech" className="text-base font-semibold">
-                  Mandatory Technologies
+                  Mandatory Tech Stack
                 </Label>
                 <InfoTooltip content="Any specific technologies, platforms, or tools that must be used? (e.g., AWS, Java, PostgreSQL)" />
               </div>
@@ -111,7 +116,7 @@ const Step4TechnicalRules = ({ values, onChange }: Step4TechnicalRulesProps) => 
             </div>
           </div>
 
-          <div className="p-6 rounded-xl border bg-card">
+          <div className="p-6 rounded-xl border bg-card/50 backdrop-blur border-secondary/20">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Label htmlFor="team-skills" className="text-base font-semibold">
@@ -123,20 +128,22 @@ const Step4TechnicalRules = ({ values, onChange }: Step4TechnicalRulesProps) => 
                 id="team-skills"
                 value={values.teamSkills}
                 onChange={(e) => onChange({ ...values, teamSkills: e.target.value })}
-                placeholder="e.g., Expert in Python and React, new to Kubernetes..."
+                placeholder="e.g., Team is expert in Python/Django, but has no experience with Kubernetes..."
                 className="min-h-[120px] text-base resize-none"
               />
             </div>
           </div>
         </div>
 
-        {/* Right Column - Integrations */}
+        {/* Right Column - The Rules */}
         <div className="space-y-6">
-          <div className="p-6 rounded-xl border bg-card h-full">
+          <h3 className="text-lg font-semibold">The Rules</h3>
+          
+          <div className="p-6 rounded-xl border bg-card/50 backdrop-blur border-accent/20">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Label htmlFor="integrations" className="text-base font-semibold">
-                  Required Integrations
+                  External Integrations
                 </Label>
                 <InfoTooltip content="What external systems, APIs, or services does this project need to connect with?" />
               </div>
@@ -144,12 +151,61 @@ const Step4TechnicalRules = ({ values, onChange }: Step4TechnicalRulesProps) => 
                 id="integrations"
                 value={values.integrations}
                 onChange={(e) => onChange({ ...values, integrations: e.target.value })}
-                placeholder="e.g., Salesforce CRM, Stripe payments, SendGrid email, internal analytics API..."
-                className="min-h-[280px] text-base resize-none"
+                placeholder="e.g., Must connect to Salesforce, Stripe, and an on-prem Oracle DB..."
+                className="min-h-[120px] text-base resize-none"
               />
-              <p className="text-sm text-muted-foreground">
-                List any third-party services, legacy systems, or APIs you need to integrate with.
-              </p>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-xl border bg-card/50 backdrop-blur border-primary/20">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-base font-semibold">
+                  Legal & Compliance
+                </Label>
+                <InfoTooltip content="GDPR: General Data Protection Regulation, CCPA: California Consumer Privacy Act" />
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="regulations" className="text-sm font-medium">
+                  Specific Regulations
+                </Label>
+                <Input
+                  id="regulations"
+                  value={values.regulations}
+                  onChange={(e) => onChange({ ...values, regulations: e.target.value })}
+                  placeholder="e.g., GDPR, CCPA"
+                  className="text-base"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Data Residency</Label>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => onChange({ ...values, dataResidency: "none" })}
+                    className={cn(
+                      "flex-1 p-3 rounded-lg border-2 text-sm text-center transition-all",
+                      values.dataResidency === "none"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-card hover:border-primary/50"
+                    )}
+                  >
+                    No rules
+                  </button>
+                  <button
+                    onClick={() => onChange({ ...values, dataResidency: "required" })}
+                    className={cn(
+                      "flex-1 p-3 rounded-lg border-2 text-sm text-center transition-all",
+                      values.dataResidency === "required"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-card hover:border-primary/50"
+                    )}
+                  >
+                    Required
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/tooltip";
 
 export interface BusinessDrivers {
-  primaryGoal: "time-to-market" | "long-term-scale" | "cost-control" | null;
-  budget: string;
+  primaryGoal: "speed" | "stability" | "efficiency" | null;
+  devBudget: string;
+  opsBudget: string;
   launchDate: string;
+  geography: "single" | "global";
 }
 
 interface Step3BusinessDriversProps {
@@ -23,24 +25,24 @@ interface Step3BusinessDriversProps {
 const Step3BusinessDrivers = ({ values, onChange }: Step3BusinessDriversProps) => {
   const goalCards = [
     {
-      id: "time-to-market" as const,
+      id: "speed" as const,
       icon: Clock,
-      title: "Time-to-Market",
-      description: "Get it built ASAP",
+      title: "SPEED",
+      description: "Get to market as fast as possible",
       color: "from-primary to-primary/80",
     },
     {
-      id: "long-term-scale" as const,
+      id: "stability" as const,
       icon: Building2,
-      title: "Long-Term Scale",
-      description: "Build a 10-year platform",
+      title: "STABILITY",
+      description: "Build a rock-solid, 10-year platform",
       color: "from-secondary to-secondary/80",
     },
     {
-      id: "cost-control" as const,
+      id: "efficiency" as const,
       icon: DollarSign,
-      title: "Cost Control",
-      description: "Keep hosting costs low",
+      title: "EFFICIENCY",
+      description: "Minimize all operational costs",
       color: "from-accent to-accent/80",
     },
   ];
@@ -65,8 +67,8 @@ const Step3BusinessDrivers = ({ values, onChange }: Step3BusinessDriversProps) =
           <TrendingUp className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-foreground">What's the 'Why' behind the project? 📈</h2>
-          <p className="text-muted-foreground mt-1">Help us understand your business goals</p>
+          <h2 className="text-3xl font-bold text-foreground">What's the ultimate goal of this mission? 🎯</h2>
+          <p className="text-muted-foreground mt-1">This 'Why' is key to making the right trade-offs.</p>
         </div>
       </div>
 
@@ -122,38 +124,91 @@ const Step3BusinessDrivers = ({ values, onChange }: Step3BusinessDriversProps) =
           </div>
         </div>
 
-        {/* Budget and Launch Date */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="budget" className="text-base font-semibold">
-                Budget
-              </Label>
-              <InfoTooltip content="Estimated monthly operational expenses (OpEx) or capital budget (CapEx) for this project" />
+        {/* Budget Card */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">What's the mission budget?</h3>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="dev-budget" className="text-base font-semibold">
+                  Development Budget
+                </Label>
+                <InfoTooltip content="Upfront capital expenses (CapEx) for building the system" />
+              </div>
+              <Input
+                id="dev-budget"
+                value={values.devBudget}
+                onChange={(e) => onChange({ ...values, devBudget: e.target.value })}
+                placeholder="e.g., $100,000 upfront"
+                className="text-base"
+              />
             </div>
-            <Input
-              id="budget"
-              value={values.budget}
-              onChange={(e) => onChange({ ...values, budget: e.target.value })}
-              placeholder="e.g., $5,000/month or $50,000 one-time"
-              className="text-base"
-            />
-          </div>
 
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="launch-date" className="text-base font-semibold">
-                Target Launch Date (MVP)
-              </Label>
-              <InfoTooltip content="When do you need the minimum viable product ready?" />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="ops-budget" className="text-base font-semibold">
+                  Monthly Ops Budget
+                </Label>
+                <InfoTooltip content="Ongoing operational expenses (OpEx) for running and maintaining the system" />
+              </div>
+              <Input
+                id="ops-budget"
+                value={values.opsBudget}
+                onChange={(e) => onChange({ ...values, opsBudget: e.target.value })}
+                placeholder="e.g., $5,000/month"
+                className="text-base"
+              />
             </div>
-            <Input
-              id="launch-date"
-              type="date"
-              value={values.launchDate}
-              onChange={(e) => onChange({ ...values, launchDate: e.target.value })}
-              className="text-base"
-            />
+          </div>
+        </div>
+
+        {/* Timeline Card */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">When do we launch?</h3>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="launch-date" className="text-base font-semibold">
+                  Target MVP Launch Date
+                </Label>
+                <InfoTooltip content="When do you need the minimum viable product ready?" />
+              </div>
+              <Input
+                id="launch-date"
+                type="date"
+                value={values.launchDate}
+                onChange={(e) => onChange({ ...values, launchDate: e.target.value })}
+                className="text-base"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-base font-semibold">Geography</Label>
+              <div className="flex gap-4 pt-2">
+                <button
+                  onClick={() => onChange({ ...values, geography: "single" })}
+                  className={cn(
+                    "flex-1 p-4 rounded-lg border-2 text-center transition-all",
+                    values.geography === "single"
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-card hover:border-primary/50"
+                  )}
+                >
+                  <div className="font-semibold">Single Country</div>
+                </button>
+                <button
+                  onClick={() => onChange({ ...values, geography: "global" })}
+                  className={cn(
+                    "flex-1 p-4 rounded-lg border-2 text-center transition-all",
+                    values.geography === "global"
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-card hover:border-primary/50"
+                  )}
+                >
+                  <div className="font-semibold">Global (Multi-Region)</div>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
