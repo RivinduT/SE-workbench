@@ -8,6 +8,7 @@ import Step3BusinessDrivers, { BusinessDrivers } from "@/components/wizard/Step3
 import Step4TechnicalRules, { TechnicalRules } from "@/components/wizard/Step4TechnicalRules";
 import Step5AdditionalInfo, { AdditionalInfo } from "@/components/wizard/Step5AdditionalInfo";
 import Step6Review from "@/components/wizard/Step6Review";
+import Step7Results from "@/components/wizard/Step7Results";
 import { useToast } from "@/hooks/use-toast";
 import { generateArchitecture, type ArchitectureResponse } from "@/lib/api";
 
@@ -18,6 +19,7 @@ const steps = [
   { id: 4, name: "The Vessel" },
   { id: 5, name: "The Extras" },
   { id: 6, name: "The Blueprint" },
+  { id: 7, name: "The Result" },
 ];
 
 const Index = () => {
@@ -93,6 +95,8 @@ const Index = () => {
     setIsGenerating(true);
     
     try {
+      console.log("Sending request to backend:", data);
+      
       // Send data to backend
       const result = await generateArchitecture(data);
       
@@ -104,6 +108,9 @@ const Index = () => {
         title: "Constellation Charted! 🌠",
         description: "Your architecture has been successfully generated!",
       });
+      
+      // Move to a results view
+      setCurrentStep(7); // Add a results step
     } catch (error) {
       console.error("Error generating architecture:", error);
       
@@ -164,6 +171,16 @@ const Index = () => {
             additionalInfo={additionalInfo}
           />
         );
+      case 7:
+        return architectureResult ? (
+          <Step7Results 
+            result={architectureResult} 
+            onStartOver={() => {
+              setCurrentStep(1);
+              setArchitectureResult(null);
+            }}
+          />
+        ) : null;
       default:
         return null;
     }
@@ -204,7 +221,7 @@ const Index = () => {
               variant="outline"
               size="lg"
               onClick={handleBack}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 || currentStep === 7}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -215,7 +232,7 @@ const Index = () => {
               Step {currentStep} of {steps.length}
             </div>
 
-            {currentStep < steps.length ? (
+            {currentStep < 6 ? (
               <Button
                 size="lg"
                 onClick={handleNext}
@@ -224,7 +241,7 @@ const Index = () => {
                 Next
                 <ArrowRight className="w-4 h-4" />
               </Button>
-            ) : (
+            ) : currentStep === 6 ? (
               <Button
                 size="lg"
                 onClick={handleSubmit}
@@ -243,6 +260,8 @@ const Index = () => {
                   </>
                 )}
               </Button>
+            ) : (
+              <div></div>
             )}
           </div>
         </div>

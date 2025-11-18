@@ -24,6 +24,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",  # Vite default port
         "http://localhost:3000",  # Alternative port
+        "http://localhost:8080",  # Current Vite port
     ],
     allow_credentials=True,
     allow_methods=["*"],
