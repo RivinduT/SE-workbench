@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Rocket } from "lucide-react";
+import { ArrowLeft, ArrowRight, Rocket, Loader2 } from "lucide-react";
 import ProgressBar from "@/components/ProgressBar";
 import Step1BigIdea from "@/components/wizard/Step1BigIdea";
 import Step2QualityGoals, { QualityGoals } from "@/components/wizard/Step2QualityGoals";
@@ -9,6 +9,7 @@ import Step4TechnicalRules, { TechnicalRules } from "@/components/wizard/Step4Te
 import Step5AdditionalInfo, { AdditionalInfo } from "@/components/wizard/Step5AdditionalInfo";
 import Step6Review from "@/components/wizard/Step6Review";
 import { useToast } from "@/hooks/use-toast";
+import { generateArchitecture, type ArchitectureResponse } from "@/lib/api";
 
 const steps = [
   { id: 1, name: "The Spark" },
@@ -22,6 +23,8 @@ const steps = [
 const Index = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [architectureResult, setArchitectureResult] = useState<ArchitectureResponse | null>(null);
   
   const [projectDescription, setProjectDescription] = useState("");
   const [qualityGoals, setQualityGoals] = useState<QualityGoals>({
@@ -78,7 +81,7 @@ const Index = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const data = {
       projectDescription,
       qualityGoals,
@@ -87,12 +90,31 @@ const Index = () => {
       additionalInfo,
     };
     
-    console.log("Solution Architecture Blueprint:", data);
+    setIsGenerating(true);
     
-    toast({
-      title: "Constellation Charted! 🌠",
-      description: "Your architecture is being generated. Check the console for details.",
-    });
+    try {
+      // Send data to backend
+      const result = await generateArchitecture(data);
+      
+      setArchitectureResult(result);
+      
+      console.log("Generated Architecture:", result);
+      
+      toast({
+        title: "Constellation Charted! 🌠",
+        description: "Your architecture has been successfully generated!",
+      });
+    } catch (error) {
+      console.error("Error generating architecture:", error);
+      
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "Failed to generate architecture. Please check if the backend is running.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const renderStep = () => {
@@ -206,10 +228,20 @@ const Index = () => {
               <Button
                 size="lg"
                 onClick={handleSubmit}
-                className="flex items-center gap-2 bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity shadow-[0_0_30px_hsl(var(--primary)/0.6)] animate-pulse"
+                disabled={isGenerating}
+                className="flex items-center gap-2 bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity shadow-[0_0_30px_hsl(var(--primary)/0.6)] animate-pulse disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Rocket className="w-4 h-4" />
-                Let's Generate My Architecture!
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Rocket className="w-4 h-4" />
+                    Let's Generate My Architecture!
+                  </>
+                )}
               </Button>
             )}
           </div>
