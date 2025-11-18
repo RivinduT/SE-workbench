@@ -4,10 +4,13 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import os
 from dotenv import load_dotenv
-from AIService import ai_service
 
+
+ 
 # Load environment variables
 load_dotenv()
+
+from AIService import ai_service
 
 app = FastAPI(
     title="Solution Architect Workbench API",
@@ -28,50 +31,50 @@ app.add_middleware(
 )
 
 
-# Request Models
+# Request Models - All fields optional except projectDescription
 class QualityGoals(BaseModel):
-    responseTime: str
-    throughput: str
-    expectedUsers: int
-    dataVolume: str
-    growthRate: str
-    uptime: str
-    downtimeTolerance: str
-    disasterRecovery: str
-    securityNeeds: List[str]
-    authNeeds: str
-    deployFrequency: str
-    teamStructure: str
-    audience: str
-    accessibilityNeeds: str
+    responseTime: Optional[str] = ""
+    throughput: Optional[str] = ""
+    expectedUsers: Optional[int] = 1
+    dataVolume: Optional[str] = ""
+    growthRate: Optional[str] = ""
+    uptime: Optional[str] = "standard"
+    downtimeTolerance: Optional[str] = ""
+    disasterRecovery: Optional[str] = ""
+    securityNeeds: Optional[List[str]] = []
+    authNeeds: Optional[str] = ""
+    deployFrequency: Optional[str] = "monthly"
+    teamStructure: Optional[str] = "single"
+    audience: Optional[str] = "public"
+    accessibilityNeeds: Optional[str] = ""
 
 
 class BusinessDrivers(BaseModel):
-    primaryGoal: Optional[str]
-    devBudget: str
-    opsBudget: str
-    launchDate: str
-    geography: str
+    primaryGoal: Optional[str] = None
+    devBudget: Optional[str] = ""
+    opsBudget: Optional[str] = ""
+    launchDate: Optional[str] = ""
+    geography: Optional[str] = "single"
 
 
 class TechnicalRules(BaseModel):
-    mandatoryTech: List[str]
-    teamSkills: str
-    integrations: str
-    regulations: str
-    dataResidency: str
+    mandatoryTech: Optional[List[str]] = []
+    teamSkills: Optional[str] = ""
+    integrations: Optional[str] = ""
+    regulations: Optional[str] = ""
+    dataResidency: Optional[str] = "none"
 
 
 class AdditionalInfo(BaseModel):
-    additionalRequirements: str
+    additionalRequirements: Optional[str] = ""
 
 
 class ArchitectureRequest(BaseModel):
     projectDescription: str
-    qualityGoals: QualityGoals
-    businessDrivers: BusinessDrivers
-    technicalRules: TechnicalRules
-    additionalInfo: AdditionalInfo
+    qualityGoals: Optional[QualityGoals] = QualityGoals()
+    businessDrivers: Optional[BusinessDrivers] = BusinessDrivers()
+    technicalRules: Optional[TechnicalRules] = TechnicalRules()
+    additionalInfo: Optional[AdditionalInfo] = AdditionalInfo()
 
 
 # Response Models
