@@ -6,7 +6,8 @@ import Step1BigIdea from "@/components/wizard/Step1BigIdea";
 import Step2QualityGoals, { QualityGoals } from "@/components/wizard/Step2QualityGoals";
 import Step3BusinessDrivers, { BusinessDrivers } from "@/components/wizard/Step3BusinessDrivers";
 import Step4TechnicalRules, { TechnicalRules } from "@/components/wizard/Step4TechnicalRules";
-import Step5Review from "@/components/wizard/Step5Review";
+import Step5AdditionalInfo, { AdditionalInfo } from "@/components/wizard/Step5AdditionalInfo";
+import Step6Review from "@/components/wizard/Step6Review";
 import { useToast } from "@/hooks/use-toast";
 
 const steps = [
@@ -14,7 +15,8 @@ const steps = [
   { id: 2, name: "The Orbit" },
   { id: 3, name: "The Mission" },
   { id: 4, name: "The Vessel" },
-  { id: 5, name: "The Blueprint" },
+  { id: 5, name: "The Extras" },
+  { id: 6, name: "The Blueprint" },
 ];
 
 const Index = () => {
@@ -52,6 +54,9 @@ const Index = () => {
     regulations: "",
     dataResidency: "none",
   });
+  const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo>({
+    additionalRequirements: "",
+  });
 
   const handleNext = () => {
     if (currentStep === 1 && !projectDescription.trim()) {
@@ -79,6 +84,7 @@ const Index = () => {
       qualityGoals,
       businessDrivers,
       technicalRules,
+      additionalInfo,
     };
     
     console.log("Solution Architecture Blueprint:", data);
@@ -121,11 +127,19 @@ const Index = () => {
         );
       case 5:
         return (
-          <Step5Review
+          <Step5AdditionalInfo
+            values={additionalInfo}
+            onChange={setAdditionalInfo}
+          />
+        );
+      case 6:
+        return (
+          <Step6Review
             projectDescription={projectDescription}
             qualityGoals={qualityGoals}
             businessDrivers={businessDrivers}
             technicalRules={technicalRules}
+            additionalInfo={additionalInfo}
           />
         );
       default:

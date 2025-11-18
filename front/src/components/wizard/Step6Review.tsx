@@ -6,19 +6,21 @@ import type { QualityGoals } from "./Step2QualityGoals";
 import type { BusinessDrivers } from "./Step3BusinessDrivers";
 import type { TechnicalRules } from "./Step4TechnicalRules";
 
-interface Step5ReviewProps {
+interface Step6ReviewProps {
   projectDescription: string;
   qualityGoals: QualityGoals;
   businessDrivers: BusinessDrivers;
   technicalRules: TechnicalRules;
+  additionalInfo: { additionalRequirements: string };
 }
 
-const Step5Review = ({
+const Step6Review = ({
   projectDescription,
   qualityGoals,
   businessDrivers,
   technicalRules,
-}: Step5ReviewProps) => {
+  additionalInfo,
+}: Step6ReviewProps) => {
   const scalabilityLabels = ["1,000s", "10,000s", "100,000s", "1 Million+"];
   
   const uptimeLabels = {
@@ -156,11 +158,18 @@ const Step5Review = ({
                     <span className="text-muted-foreground">Data Sensitivity:</span>{" "}
                     {qualityGoals.securityNeeds.length > 0 ? (
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {qualityGoals.securityNeeds.map((sec) => (
+                      {qualityGoals.securityNeeds.map((sec) => {
+                        let label = sec;
+                        if (sec === "pii") label = "PII";
+                        else if (sec === "payments") label = "PCI-DSS";
+                        else if (sec === "health") label = "HIPAA";
+                        
+                        return (
                           <Badge key={sec} variant="secondary" className="text-xs">
-                            {sec === "pii" ? "PII" : sec === "payments" ? "PCI-DSS" : sec === "health" ? "HIPAA" : sec}
+                            {label}
                           </Badge>
-                        ))}
+                        );
+                      })}
                       </div>
                     ) : (
                       "None specified"
@@ -318,9 +327,24 @@ const Step5Review = ({
             </div>
           </div>
         </Card>
+
+        {/* Additional Information */}
+        <Card className="p-6 border-accent/20 bg-card/50 backdrop-blur">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <FileCheck className="w-5 h-5 text-accent" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-3">Additional Requirements</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {additionalInfo.additionalRequirements || "No additional requirements specified"}
+              </p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );
 };
 
-export default Step5Review;
+export default Step6Review;

@@ -71,7 +71,7 @@ const Step2QualityGoals = ({ values, onChange }: Step2QualityGoalsProps) => {
           <Rocket className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Now, let's define the physics of your system. 🪐</h2>
+          <h2 className="text-3xl font-bold text-foreground">Quality Goals</h2>
           <p className="text-muted-foreground mt-1">These 'Quality Goals' decide how your system will exist and behave.</p>
         </div>
       </div>

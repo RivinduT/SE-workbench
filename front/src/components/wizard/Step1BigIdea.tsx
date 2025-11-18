@@ -15,7 +15,7 @@ const Step1BigIdea = ({ value, onChange }: Step1BigIdeaProps) => {
           <Lightbulb className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Every great journey starts with a single spark. 💡</h2>
+          {/* <h2 className="text-3xl font-bold text-foreground">Every great journey starts with a single spark. 💡</h2> */}
           <p className="text-muted-foreground mt-1">What's the big idea? Describe the project you want to build in your own words.</p>
         </div>
       </div>
