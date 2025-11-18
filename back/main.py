@@ -14,8 +14,8 @@ from AIService import ai_service
 
 app = FastAPI(
     title="Solution Architect Workbench API",
-    description="AI-powered solution architecture generation using Gemini + DeepSeek",
-    version="1.0.0"
+    description="AI-powered solution architecture generation using Gemini",
+    version="2.0.0"
 )
 
 # CORS configuration
@@ -110,9 +110,9 @@ async def generate_architecture(request: ArchitectureRequest):
     """
     Generate solution architecture based on user requirements.
     
-    Two-stage process:
+    Two-stage Gemini process:
     1. Gemini API: Enhance user input into detailed, structured prompt
-    2. DeepSeek API: Generate comprehensive architecture from enhanced prompt
+    2. Gemini API: Generate comprehensive architecture from enhanced prompt
     """
     try:
         # Convert Pydantic model to dictionary for processing

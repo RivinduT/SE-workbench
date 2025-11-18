@@ -1,7 +1,7 @@
 """
-AI Service for two-stage architecture generation:
+AI Service for two-stage architecture generation using Gemini:
 1. Gemini: Enhance user input into detailed prompt
-2. DeepSeek: Generate final architecture from enhanced prompt
+2. Gemini: Generate final architecture from enhanced prompt
 """
 
 import os
@@ -9,7 +9,6 @@ import json
 from typing import Dict, Any
 
 import google.generativeai as genai
-from openai import OpenAI
 
 
 class AIArchitectService:
@@ -31,22 +30,6 @@ class AIArchitectService:
             except Exception:
                 print("⚠ Gemini model invalid. Falling back to gemini-1.5-flash")
                 self.gemini = genai.GenerativeModel("gemini-1.5-flash")
-
-        # ======================================================
-        #                   DEEPSEEK SETUP
-        # ======================================================
-        self.deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
-        self.deepseek_model = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
-
-        if not self.deepseek_api_key:
-            print("⚠ WARNING: DeepSeek API key not found!")
-            self.deepseek = None
-        else:
-            # DeepSeek is OpenAI compatible
-            self.deepseek = OpenAI(
-                api_key=self.deepseek_api_key,
-                base_url="https://api.deepseek.com/v1"
-            )
 
     # ===========================================================
     #               FORMAT USER REQUIREMENTS
@@ -129,69 +112,102 @@ USER REQUIREMENTS:
             return enhanced_prompt
 
         except Exception as e:
-            raise Exception(f"Gemini API error: {str(e)}")
+            raise RuntimeError(f"Gemini API error: {str(e)}")
 
     # ===========================================================
-    #                 STAGE 2 — DEEPSEEK
+    #                 STAGE 2 — GEMINI (ARCHITECTURE)
     # ===========================================================
-    async def generate_with_deepseek(self, enhanced_prompt: str) -> Dict[str, Any]:
+    async def generate_architecture_with_gemini(self, enhanced_prompt: str) -> Dict[str, Any]:
+        """
+        Generate final architecture using Gemini API with optimized prompt.
+        """
+        if not self.gemini:
+            raise ValueError("Gemini API not configured")
 
-        if not self.deepseek:
-            raise ValueError("DeepSeek API not configured")
+        architecture_prompt = f"""
+You are an expert software architect with deep knowledge of system design, architecture patterns, and best practices.
 
-        system_prompt = """
-You are an expert software architect. 
-Generate a detailed architecture in valid JSON using this structure:
+Based on the following requirements, generate a comprehensive, production-ready software architecture.
 
-{
-  "architecture": {
-    "overview": "",
+{enhanced_prompt}
+
+IMPORTANT: Respond with ONLY valid JSON in this exact structure (no markdown, no code blocks, no additional text):
+
+{{
+  "architecture": {{
+    "overview": "A comprehensive overview of the proposed architecture (3-4 sentences)",
     "components": [
-      { "name": "", "description": "", "technology": "", "reasoning": "" }
+      {{
+        "name": "Component Name",
+        "description": "Detailed description of this component's role and responsibilities",
+        "technology": "Specific technology/framework/service to use",
+        "reasoning": "Why this technology was chosen for this component"
+      }}
     ],
-    "patterns": [],
-    "reasoning": ""
-  },
-  "recommendations": [],
-  "tradeoffs": []
-}
+    "patterns": ["List of architectural patterns used, e.g., 'Microservices', 'Event-Driven', 'CQRS'"],
+    "reasoning": "Overall architectural reasoning explaining why this architecture best fits the requirements"
+  }},
+  "recommendations": [
+    "Specific actionable recommendations for implementation, deployment, and operations"
+  ],
+  "tradeoffs": [
+    "Key tradeoffs made in this architecture and their implications"
+  ]
+}}
+
+Generate a thorough architecture with at least 5-8 components covering frontend, backend, database, caching, messaging, monitoring, etc. as appropriate.
 """
 
         try:
-            response = self.deepseek.chat.completions.create(
-                model=self.deepseek_model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": enhanced_prompt}
-                ],
-                max_tokens=4000,
-                temperature=0.7,
-                response_format={"type": "json_object"}
+            # Configure generation parameters for better JSON output
+            generation_config = {
+                "temperature": 0.7,
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 8192,
+            }
+            
+            response = self.gemini.generate_content(
+                architecture_prompt,
+                generation_config=generation_config
             )
+            
+            raw = response.text.strip()
 
-            raw = response.choices[0].message.content
-
-            print("\n========== DEEPSEEK RAW RESPONSE ==========")
+            print("\n========== GEMINI ARCHITECTURE RESPONSE ==========")
             print(raw)
-            print("==========================================\n")
+            print("==================================================\n")
+
+            # Clean up response (remove markdown code blocks if present)
+            if raw.startswith("```json"):
+                raw = raw[7:]
+            if raw.startswith("```"):
+                raw = raw[3:]
+            if raw.endswith("```"):
+                raw = raw[:-3]
+            raw = raw.strip()
 
             return json.loads(raw)
 
-        except json.JSONDecodeError:
-            raise Exception("DeepSeek returned invalid JSON.")
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Gemini returned invalid JSON: {str(e)}")
         except Exception as e:
-            raise Exception(f"DeepSeek API error: {str(e)}")
+            raise RuntimeError(f"Gemini architecture generation error: {str(e)}")
 
     # ===========================================================
-    #                      2-STAGE PIPELINE
+    #                      2-STAGE GEMINI PIPELINE
     # ===========================================================
     async def generate_architecture(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
-
-        print("\n========== STARTING ARCHITECTURE PIPELINE ==========")
+        """
+        Two-stage architecture generation using Gemini:
+        1. Enhance user input into structured prompt
+        2. Generate comprehensive architecture from enhanced prompt
+        """
+        print("\n========== STARTING GEMINI 2-STAGE PIPELINE ==========")
 
         formatted = self.format_user_requirements(request_data)
         enhanced = await self.enhance_with_gemini(formatted)
-        final_arch = await self.generate_with_deepseek(enhanced)
+        final_arch = await self.generate_architecture_with_gemini(enhanced)
 
         print("\n========== ARCHITECTURE GENERATION COMPLETE ==========\n")
 
