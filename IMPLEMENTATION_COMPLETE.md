@@ -23,12 +23,15 @@ Your **Solution Architect Workbench** now has a complete two-stage AI pipeline:
 ### Backend Files
 ```
 back/
-├── ai_service.py          ✨ NEW - Two-stage AI generation logic
-├── main.py                ✏️ UPDATED - Integrated AI service
-├── requirements.txt       ✏️ UPDATED - Added AI dependencies
-├── .env                   ✨ NEW - Your API keys
-├── .env.example          ✏️ UPDATED - Template with AI keys
-└── test_api.py           (existing - still works)
+├── AIService/                 ✨ NEW - AI generation package
+│   ├── ai_architect_service.py  - Two-stage AI logic
+│   ├── __init__.py              - Package initialization
+│   └── README.md                - Package documentation
+├── main.py                    ✏️ UPDATED - Integrated AI service
+├── requirements.txt           ✏️ UPDATED - Added AI dependencies
+├── .env                       ✨ NEW - Your API keys
+├── .env.example              ✏️ UPDATED - Template with AI keys
+└── test_api.py               (existing - still works)
 ```
 
 ### Documentation Files
@@ -246,7 +249,9 @@ ARCHITECTURE GENERATION COMPLETE
 | File | Status | Purpose |
 |------|--------|---------|
 | `main.py` | ✏️ Updated | Added AI service integration |
-| `ai_service.py` | ✨ Created | Two-stage AI generation logic |
+| `AIService/ai_architect_service.py` | ✨ Created | Two-stage AI generation logic |
+| `AIService/__init__.py` | ✨ Created | Package initialization |
+| `AIService/README.md` | ✨ Created | Package documentation |
 | `requirements.txt` | ✏️ Updated | Added Gemini & DeepSeek SDKs |
 | `.env` | ✨ Created | API keys storage |
 | `.env.example` | ✏️ Updated | Template with AI keys |
@@ -280,8 +285,9 @@ ARCHITECTURE GENERATION COMPLETE
 
 ### For Backend Development
 6. **back/README.md** - Backend overview
-7. **back/ai_service.py** - AI logic (with comments)
-8. **back/main.py** - API endpoints
+7. **AIService/README.md** - AI package documentation
+8. **AIService/ai_architect_service.py** - AI logic (with comments)
+9. **back/main.py** - API endpoints
 
 ---
 

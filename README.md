@@ -112,7 +112,10 @@ SE-workbench/
 │
 ├── back/                       # FastAPI backend
 │   ├── main.py                # API endpoints
-│   ├── ai_service.py          # Two-stage AI logic
+│   ├── AIService/             # AI generation package
+│   │   ├── ai_architect_service.py
+│   │   ├── __init__.py
+│   │   └── README.md
 │   ├── requirements.txt       # Python dependencies
 │   └── .env                   # API keys
 │

@@ -71,7 +71,10 @@ Architecture Response
 ## Files
 
 - `main.py` - FastAPI application and endpoints
-- `ai_service.py` - Two-stage AI generation logic
+- `AIService/` - Two-stage AI generation package
+  - `ai_architect_service.py` - AI generation logic
+  - `__init__.py` - Package initialization
+  - `README.md` - Package documentation
 - `test_api.py` - Test script for backend
 - `requirements.txt` - Python dependencies
 - `.env` - Your API keys (not committed)

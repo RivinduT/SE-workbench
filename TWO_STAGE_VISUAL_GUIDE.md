@@ -27,7 +27,7 @@
 └────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌────────────────────────────────────────────────────────────────────────┐
-│                    AI SERVICE (ai_service.py)                          │
+│                    AI SERVICE (AIService package)                      │
 │                                                                         │
 │  ┌──────────────────────────────────────────────────────────────┐    │
 │  │  STAGE 0: FORMAT USER REQUIREMENTS                           │    │
@@ -291,13 +291,13 @@ ARCHITECTURE GENERATION COMPLETE
 
 ## 🔧 Customization Points
 
-### 1. Enhancement Prompt (ai_service.py)
+### 1. Enhancement Prompt (AIService/ai_architect_service.py)
 Modify the hardcoded prompt in `enhance_with_gemini()`:
 ```python
 enhancement_prompt = f"""You are an expert solution architect...
 ```
 
-### 2. System Prompt for DeepSeek (ai_service.py)
+### 2. System Prompt for DeepSeek (AIService/ai_architect_service.py)
 Modify in `generate_with_deepseek()`:
 ```python
 system_prompt = """You are an expert solution architect...

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import os
 from dotenv import load_dotenv
-from ai_service import ai_service
+from AIService import ai_service
 
 # Load environment variables
 load_dotenv()

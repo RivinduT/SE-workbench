@@ -166,7 +166,10 @@ Display success + console log
 ```
 back/
 ├── main.py              # FastAPI app and endpoints
-├── ai_service.py        # Two-stage AI generation logic
+├── AIService/           # Two-stage AI generation package
+│   ├── ai_architect_service.py  # AI generation logic
+│   ├── __init__.py              # Package initialization
+│   └── README.md                # Package documentation
 ├── requirements.txt     # Python dependencies
 ├── .env                 # Your API keys (DO NOT COMMIT)
 ├── .env.example         # Template for .env
@@ -174,7 +177,16 @@ back/
 └── README.md            # Backend documentation
 ```
 
-## The AI Service (ai_service.py)
+## The AI Service (AIService Package)
+
+### Package Structure
+
+```
+AIService/
+├── __init__.py                  # Package exports
+├── ai_architect_service.py      # Main AI logic
+└── README.md                    # Package docs
+```
 
 ### Key Functions
 
@@ -194,7 +206,7 @@ Returns structured JSON with complete architecture.
 
 ## Customizing the Enhancement Prompt
 
-The hardcoded prompt for Gemini is in `ai_service.py` at the `enhance_with_gemini` method:
+The hardcoded prompt for Gemini is in `AIService/ai_architect_service.py` at the `enhance_with_gemini` method:
 
 ```python
 enhancement_prompt = f"""You are an expert solution architect prompt engineer...
